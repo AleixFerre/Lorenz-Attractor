@@ -26,56 +26,101 @@ let points = [];
 let hueEnable = false;
 let h = 0;
 
-function setup() {
-  createCanvas(800, 600, WEBGL);
+let noiseCheckbox;
+let hueCheckbox;
 
-  setAttributes('antialias', true);
-  colorMode(HSB, 100);
+let easycam;
+
+function setup() {
+
+    pixelDensity(1);
+
+    createCanvas(windowWidth, 600, WEBGL);
+
+    createDiv("<h1>LORENZ ATTRACTOR</h1>");
+    createDiv("Double click the canvas to save the frame!");
+
+    noiseCheckbox = createCheckbox("Noise");
+    noiseCheckbox.input(noiseChanged);
+
+    hueCheckbox = createCheckbox("Hue");
+    hueCheckbox.input(hueChanged);
+
+    setAttributes('antialias', true);
+    colorMode(HSB, 100);
 }
 
 function draw() {
-  background(0);
+    background(0);
 
-  // translate(width / 2, height / 2);
+    orbitControl();
 
-  let dx = (a * (y - x)) * dt;
-  let dy = (x * (b - z) - y) * dt;
-  let dz = (x * y - c * z) * dt;
+    // translate(width / 2, height / 2);
 
-  x = x + dx;
-  y = y + dy;
-  z = z + dz;
+    let dx = (a * (y - x)) * dt;
+    let dy = (x * (b - z) - y) * dt;
+    let dz = (x * y - c * z) * dt;
 
+    x = x + dx;
+    y = y + dy;
+    z = z + dz;
 
-  let p = new p5.Vector(x, y, z);
-  if (p.x) {
-    points.push(p);
-    //print(p);
-  }
-
-  scale(5);
-
-  if (hueEnable) {
-    h += 0.1;
-    if (h > 100) {
-      h = 0
+    let p = new p5.Vector(x, y, z);
+    if (p.x) {
+        points.push(p);
     }
-  }
 
-  noFill();
+    scale(5);
 
-  beginShape();
-  for (let p of points) {
-
-    stroke(h, 100, 100);
-    if (noiseEnable) {
-      vertex(p.x + noise(xoff), p.y + noise(yoff), p.z + noise(zoff));
-    } else {
-      vertex(p.x, p.y, p.z);
+    if (hueEnable) {
+        h += 0.1;
+        if (h > 100) {
+            h = 0;
+        }
     }
-    xoff++;
-    yoff++;
-    zoff++;
-  }
-  endShape();
+
+    noFill();
+
+    beginShape();
+    for (let p of points) {
+
+        stroke(h, 100, 100);
+        if (noiseEnable) {
+            vertex(p.x + noise(xoff), p.y + noise(yoff), p.z + noise(zoff));
+        } else {
+            vertex(p.x, p.y, p.z);
+        }
+        xoff++;
+        yoff++;
+        zoff++;
+    }
+    endShape();
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, 600);
+}
+
+function hueChanged() {
+    hueEnable = !hueEnable;
+    points = [];
+    x = 1.0;
+    y = 1.0;
+    z = 1.0;
+
+    h = 0;
+}
+
+function noiseChanged() {
+    noiseEnable = !noiseEnable;
+    points = [];
+    x = 1.0;
+    y = 1.0;
+    z = 1.0;
+
+    xoff = 0.0;
+}
+
+function doubleClicked() {
+    saveCanvas("lorenz", "png");
 }
