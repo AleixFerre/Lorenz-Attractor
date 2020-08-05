@@ -1,4 +1,5 @@
 # Lorenz-Attractor
+
 Lorenz Attractor model implemented in p5.js
 
 [![example](https://raw.githubusercontent.com/CatalaHD/Lorenz-Attractor/master/examples/example.jpg)](https://catalahd.github.io/Lorenz-Attractor/)
